@@ -34,7 +34,7 @@ final Uri _url = Uri.parse('https://flutter.dev');
                 Expanded(child: Text("Find User !",style: TextStyle(fontSize: 28,color: Colors.black),)),
                 BlocBuilder<UserBloc,UserState>(builder: (context, state) {
                   if(state is SearchUsersSuccessState){
-                    return Text(state.currentPage.toString()+'/'+state.totalPage.toString());
+                    return Text(state.currentPage.toString()+'/'+state.totalPage.toString()+'(${state.users.length} - ${state.pageSize*state.totalPage})');
                   }
                   return Text("");
                   
@@ -56,7 +56,7 @@ final Uri _url = Uri.parse('https://flutter.dev');
                 onPressed: (() {
                   print(username.text);
                   String name = username.text;
-                  context.read<UserBloc>().add(SearchUsersEvent( 0, 15, name: name));
+                  context.read<UserBloc>().add(SearchUsersEvent( 1, 10, name: name));
                 }), 
                 
                 icon: Icon(Icons.search),)
@@ -73,7 +73,6 @@ final Uri _url = Uri.parse('https://flutter.dev');
                   child: Text("Erreur : "+state.errorMessage),
                 );
               } else if(state is SearchUsersSuccessState){
-                print(state.listUsers.toJson());
                 return Expanded(
                   child: LazyLoadScrollView(
                     onEndOfPage: () { 
@@ -87,13 +86,13 @@ final Uri _url = Uri.parse('https://flutter.dev');
                           child: Column(
                             children: [
                               ListTile(
-                                leading: CircleAvatar(backgroundImage: NetworkImage(state.listUsers.items[index].avatarUrl),),
-                                title: Text(state.listUsers.items[index].login,
+                                leading: CircleAvatar(backgroundImage: NetworkImage(state.users[index].avatarUrl),),
+                                title: Text(state.users[index].login,
                                       style: TextStyle(fontSize: 26),),
                                 subtitle: Row(
                                   children: [
                                     Text(
-                                      "${state.listUsers.items[index].score}",
+                                      "${state.users[index].score}",
                                       style: TextStyle(color: Colors.black.withOpacity(0.6)),
                                     ),
                                     Icon(Icons.star)
@@ -110,7 +109,7 @@ final Uri _url = Uri.parse('https://flutter.dev');
                                       onPressed: (){
                                         Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => UserDetails(user:state.listUsers.items[index] ,)),
+                                            MaterialPageRoute(builder: (context) => UserDetails(user:state.users[index] ,)),
                                           );
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -133,7 +132,7 @@ final Uri _url = Uri.parse('https://flutter.dev');
                           height: 2,
                         );
                       }), 
-                      itemCount: state.listUsers.items.length
+                      itemCount: state.users.length
                       ),
                   ),
                 );
