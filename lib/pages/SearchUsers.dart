@@ -6,6 +6,7 @@ import 'package:github_app__bloc/bloc/user/users.state.dart';
 import 'package:github_app__bloc/pages/UserDetails.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SearchUsers extends StatelessWidget {
    
@@ -66,7 +67,15 @@ final Uri _url = Uri.parse('https://flutter.dev');
             BlocBuilder<UserBloc,UserState>(builder: (context,state){
               if(state is SearchUsersLoadingState){
                 return Center(
-                  child: CircularProgressIndicator(),
+                  child: SpinKitFadingCircle(
+                    itemBuilder: (BuildContext context, int index) {
+                      return DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: index.isEven ? Colors.blueGrey : Colors.green,
+                        ),
+                      );
+                    },
+                  ),
                 );
               } else if (state is SearchUsersFailedState){
                 return Center(
